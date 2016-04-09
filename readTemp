@@ -1,0 +1,21 @@
+PATH_TO_FILE="/sys/bus/w1/devices/28-00000559f44f/w1_slave"
+TEMP_FOLDER="/home/amir/temp_measurements"
+
+rawTemp=$(cat $PATH_TO_FILE | awk -F't=*' '$0=$2')
+divTemp=$(echo "scale=3; $rawTemp / 1000" | bc)
+dateStamp=$(date +"%Y-%m-%d")
+timeStamp=$(date +"%T")
+folderName="$TEMP_FOLDER/$(date +%Y%m)"
+fileName="$folderName/$(date +%d)"
+
+mkdir -p $folderName
+if [ ! -f $fileName ]; then
+    echo "Date       Time     Raw   Div" > $fileName
+fi
+
+echo "rawTemp: $rawTemp"
+echo "divTemp: $divTemp"
+echo "timeStamp: $timeStamp"
+echo "folderName: $folderName"
+echo "fileName: $fileName"
+echo "$dateStamp $timeStamp $rawTemp $divTemp" >> $fileName
